@@ -4,7 +4,10 @@
 \alias{getAnalysisDetails}
 \title{Get all analysis details}
 \usage{
-getAnalysisDetails()
+getAnalysisDetails(cdmVersion)
+}
+\arguments{
+\item{cdmVersion}{Define the OMOP CDM version used:  currently supports v5.x and v6.x. Use major release number or minor number only (e.g. 5, 5.3)}
 }
 \value{
 A data.frame with the analysis details.

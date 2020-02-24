@@ -123,6 +123,7 @@ achilles <- function (connectionDetails,
   }
   
   cdmVersion <- as.character(cdmVersion)
+  cdmVersionFolder <- sprintf("v%s", (strsplit(x = as.character(cdmVersion), split = ".", fixed = TRUE))[[1]][1])
   
   # Check CDM version is valid ---------------------------------------------------------------------------------------------------
   
@@ -157,7 +158,7 @@ achilles <- function (connectionDetails,
   
   # Obtain analyses to run --------------------------------------------------------------------------------------------------------
   
-  analysisDetails <- getAnalysisDetails()
+  analysisDetails <- getAnalysisDetails(cdmVersion = cdmVersion)
   costIds <- analysisDetails$ANALYSIS_ID[analysisDetails$COST == 1]
   
   if (!missing(analysisIds)) {
@@ -200,12 +201,12 @@ achilles <- function (connectionDetails,
   resultsTables <- list(
     list(detailType = "results",
                   tablePrefix = tempAchillesPrefix, 
-                  schema = read.csv(file = system.file("csv", sprintf("v%s", cdmVersion), "schemas", "schema_achilles_results.csv", package = "Achilles"), 
+                  schema = read.csv(file = system.file("csv", "schemas", "schema_achilles_results.csv", package = "Achilles"), 
                            header = TRUE),
                   analysisIds = analysisDetails[analysisDetails$DISTRIBUTION <= 0, ]$ANALYSIS_ID),
     list(detailType = "results_dist",
                       tablePrefix = sprintf("%1s_%2s", tempAchillesPrefix, "dist"),
-                      schema = read.csv(file = system.file("csv", sprintf("v%s", cdmVersion), "schemas", "schema_achilles_results_dist.csv", package = "Achilles"), 
+                      schema = read.csv(file = system.file("csv", "schemas", "schema_achilles_results_dist.csv", package = "Achilles"), 
                            header = TRUE),
                       analysisIds = analysisDetails[abs(analysisDetails$DISTRIBUTION) == 1, ]$ANALYSIS_ID))
   
@@ -271,7 +272,7 @@ achilles <- function (connectionDetails,
                            stratum5Name = analysisDetail["STRATUM_5_NAME"])
     })  
     
-    sql <- SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("v%s/analyses/create_analysis_table.sql", cdmVersion),
+    sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "analyses/create_analysis_table.sql",
                                              packageName = "Achilles", 
                                              dbms = connectionDetails$dbms,
                                              warnOnMissingParameters = FALSE,
@@ -313,7 +314,8 @@ achilles <- function (connectionDetails,
   if (runCostAnalysis) {
     
     distCostAnalysisDetails <- analysisDetails[analysisDetails$COST == 1 & analysisDetails$DISTRIBUTION == 1, ]
-    costMappings <- read.csv(system.file("csv", sprintf("v%s", cdmVersion), "achilles", "achilles_cost_columns.csv", package = "Achilles"), 
+    costMappings <- read.csv(system.file("csv", "achilles", cdmVersionFolder, 
+                                         "achilles_cost_columns.csv", package = "Achilles"), 
                              header = TRUE, stringsAsFactors = FALSE)
     
     drugCostMappings <- costMappings[costMappings$DOMAIN == "Drug", ]
@@ -333,7 +335,7 @@ achilles <- function (connectionDetails,
       }
       list(
         analysisId = ifelse(domainId == "Drug", 15000, 16000),
-        sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("v%s/analyses/raw_cost_template.sql", cdmVersion), 
+        sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("analyses/%s/raw_cost_template.sql", cdmVersionFolder), 
                                                 packageName = "Achilles", 
                                                 dbms = connectionDetails$dbms,
                                                 warnOnMissingParameters = FALSE,
@@ -389,7 +391,7 @@ achilles <- function (connectionDetails,
       apply(distCostAnalysisDetails[distCostAnalysisDetails$STRATUM_1_NAME == "drug_concept_id", ], 1, 
             function (analysisDetail) {
               list(analysisId = analysisDetail["ANALYSIS_ID"][[1]],
-                   sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("v%s/analyses/cost_distribution_template.sql", cdmVersion),
+                   sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("analyses/%s/cost_distribution_template.sql", cdmVersionFolder),
                                                            packageName = "Achilles",
                                                            dbms = connectionDetails$dbms,
                                                            warnOnMissingParameters = FALSE,
@@ -410,7 +412,7 @@ achilles <- function (connectionDetails,
       apply(distCostAnalysisDetails[distCostAnalysisDetails$STRATUM_1_NAME == "procedure_concept_id", ], 1,
             function (analysisDetail) {
               list(analysisId = analysisDetail["ANALYSIS_ID"][[1]],
-                   sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("v%s/analyses/cost_distribution_template.sql", cdmVersion),
+                   sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("analyses/%s/cost_distribution_template.sql", cdmVersionFolder),
                                                            packageName = "Achilles",
                                                            dbms = connectionDetails$dbms,
                                                            warnOnMissingParameters = FALSE,
@@ -484,6 +486,7 @@ achilles <- function (connectionDetails,
                                resultsDatabaseSchema = resultsDatabaseSchema,
                                oracleTempSchema = oracleTempSchema,
                                cdmVersion = cdmVersion,
+                               cdmVersionFolder = cdmVersionFolder,
                                tempAchillesPrefix = tempAchillesPrefix,
                                resultsTables = resultsTables,
                                sourceName = sourceName,
@@ -557,6 +560,7 @@ achilles <- function (connectionDetails,
                                resultsDatabaseSchema = resultsDatabaseSchema,
                                oracleTempSchema = oracleTempSchema,
                                cdmVersion = cdmVersion,
+                               cdmVersionFolder = cdmVersionFolder,
                                tempAchillesPrefix = tempAchillesPrefix,
                                numThreads = numThreads,
                                smallCellCount = smallCellCount,
@@ -729,7 +733,7 @@ createIndices <- function(connectionDetails,
                                          resultsDatabaseSchema = resultsDatabaseSchema))
   }
   
-  indices <- read.csv(file = system.file("csv", sprintf("v%s", cdmVersion), "post_processing", "indices.csv", package = "Achilles"), 
+  indices <- read.csv(file = system.file("csv", "post_processing", "indices.csv", package = "Achilles"), 
                       header = TRUE, stringsAsFactors = FALSE)
   
   # create index SQLs ------------------------------------------------------------------------------------------------  
@@ -819,7 +823,7 @@ validateSchema <- function(connectionDetails,
   
   cdmVersion <- max(unlist(majorVersions))
 
-  sql <- SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("v%s/validate_schema.sql", cdmVersion),
+  sql <- SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("validate/%s/validate_schema.sql", cdmVersionFolder),
                                            packageName = "Achilles", 
                                            dbms = connectionDetails$dbms,
                                            warnOnMissingParameters = FALSE,
@@ -855,8 +859,8 @@ getAnalysisDetails <- function(cdmVersion) {
   read.csv( 
     system.file(
       "csv", 
-      (strsplit(x = as.character(cdmVersion), split = ".", fixed = TRUE))[[1]][1],
       "achilles", 
+      sprintf("v%s", (strsplit(x = as.character(cdmVersion), split = ".", fixed = TRUE))[[1]][1]),
       "achilles_analysis_details.csv", 
       package = "Achilles"),
     stringsAsFactors = FALSE
@@ -1040,13 +1044,15 @@ dropAllScratchTables <- function(connectionDetails,
                             resultsDatabaseSchema,
                             oracleTempSchema,
                             cdmVersion,
+                            cdmVersionFolder,
                             tempAchillesPrefix, 
                             resultsTables,
                             sourceName,
                             numThreads,
                             outputFolder) {
   
-  SqlRender::loadRenderTranslateSql(sqlFilename = file.path(sprintf("v%s", cdmVersion), "analyses", paste(analysisId, "sql", sep = ".")),
+  SqlRender::loadRenderTranslateSql(sqlFilename = file.path("analyses", cdmVersionFolder, 
+                                                            paste(analysisId, "sql", sep = ".")),
                                          packageName = "Achilles",
                                          dbms = connectionDetails$dbms,
                                          warnOnMissingParameters = FALSE,
@@ -1147,7 +1153,7 @@ dropAllScratchTables <- function(connectionDetails,
     detailSqls <- c(detailSqls, benchmarkSql)
   }
   
-  SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("v%s/analyses/merge_achilles_tables.sql", cdmVersion),
+  SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("analyses/%s/merge_achilles_tables.sql", cdmVersionFolder),
                                     packageName = "Achilles",
                                     dbms = connectionDetails$dbms,
                                     warnOnMissingParameters = FALSE,

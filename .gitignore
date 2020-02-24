@@ -38,3 +38,5 @@ rsconnect/
 output/
 
 *.log
+
+*.DS_Store
