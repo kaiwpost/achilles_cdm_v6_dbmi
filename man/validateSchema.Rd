@@ -9,8 +9,7 @@ validateSchema(
   cdmDatabaseSchema,
   resultsDatabaseSchema = cdmDatabaseSchema,
   cdmVersion,
-  runCostAnalysis,
-  outputFolder,
+  outputFolder = "output",
   sqlOnly = FALSE,
   verboseMode = TRUE
 )
@@ -25,8 +24,6 @@ On SQL Server, this should specifiy both the database and the schema, so for exa
 
 \item{cdmVersion}{Define the OMOP CDM version used:  currently supports v5 and above. Use major release number or minor number only (e.g. 5, 5.3)}
 
-\item{runCostAnalysis}{Boolean to determine if cost analysis should be run. Note: only works on CDM v5 and v5.1.0+ style cost tables.}
-
 \item{outputFolder}{Path to store logs and SQL files}
 
 \item{sqlOnly}{TRUE = just generate SQL files, don't actually run, FALSE = run Achilles}
@@ -37,5 +34,5 @@ On SQL Server, this should specifiy both the database and the schema, so for exa
 Validate the CDM schema
 }
 \details{
-Runs a validation script to ensure the CDM is valid based on v5.x
+Runs a validation script to ensure the CDM is valid based on v5.x or v6.x
 }

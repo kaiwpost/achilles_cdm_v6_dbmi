@@ -28,7 +28,7 @@ If you are interested in adding or modifying Achilles/Heel analyses, this is the
     - If the analysis is about the COST table, then COST = 1, else COST = 0
 
   + DISTRIBUTED_FIELD field
-    - For cost analyses, the CDM field to analyze
+    - For V5.x cost analyses, the CDM field to analyze
     
   + ANALYSIS_NAME field
     - The full description of the analysis

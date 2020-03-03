@@ -15,7 +15,7 @@ achilles(
   analysisIds,
   createTable = TRUE,
   smallCellCount = 5,
-  cdmVersion = "5",
+  cdmVersion = "5.3.1",
   runHeel = TRUE,
   validateSchema = FALSE,
   runCostAnalysis = FALSE,
