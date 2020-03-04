@@ -316,7 +316,10 @@ achilles <- function(connectionDetails,
   if (runCostAnalysis & compareVersion(as.character(cdmVersion), "6") < 0) {
     
     distCostAnalysisDetails <- analysisDetails[analysisDetails$COST == 1 & analysisDetails$DISTRIBUTION == 1, ]
-    costMappings <- read.csv(system.file("csv", "achilles", "achilles_cost_columns.csv", package = "Achilles"), 
+    costMappings <- read.csv(system.file("csv", "achilles",
+                                         cdmVersionFolder,
+                                         "achilles_cost_columns.csv", 
+                                         package = "Achilles"), 
                              header = TRUE, stringsAsFactors = FALSE)
     
     drugCostMappings <- costMappings[costMappings$DOMAIN == "Drug", ]
@@ -336,7 +339,7 @@ achilles <- function(connectionDetails,
       }
       list(
         analysisId = ifelse(domainId == "Drug", 15000, 16000),
-        sql = SqlRender::loadRenderTranslateSql(sqlFilename = "analyses/raw_cost_template.sql", 
+        sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("analyses/%s/raw_cost_template.sql", cdmVersionFolder),
                                                 packageName = "Achilles", 
                                                 dbms = connectionDetails$dbms,
                                                 warnOnMissingParameters = FALSE,
@@ -392,7 +395,7 @@ achilles <- function(connectionDetails,
       apply(distCostAnalysisDetails[distCostAnalysisDetails$STRATUM_1_NAME == "drug_concept_id", ], 1, 
             function (analysisDetail) {
               list(analysisId = analysisDetail["ANALYSIS_ID"][[1]],
-                   sql = SqlRender::loadRenderTranslateSql(sqlFilename = "analyses/cost_distribution_template.sql",
+                   sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("analyses/%s/cost_distribution_template.sql", cdmVersionFolder),
                                                            packageName = "Achilles",
                                                            dbms = connectionDetails$dbms,
                                                            warnOnMissingParameters = FALSE,
@@ -413,7 +416,7 @@ achilles <- function(connectionDetails,
       apply(distCostAnalysisDetails[distCostAnalysisDetails$STRATUM_1_NAME == "procedure_concept_id", ], 1,
             function (analysisDetail) {
               list(analysisId = analysisDetail["ANALYSIS_ID"][[1]],
-                   sql = SqlRender::loadRenderTranslateSql(sqlFilename = "analyses/cost_distribution_template.sql",
+                   sql = SqlRender::loadRenderTranslateSql(sqlFilename = sprintf("analyses/%s/cost_distribution_template.sql", cdmVersionFolder),
                                                            packageName = "Achilles",
                                                            dbms = connectionDetails$dbms,
                                                            warnOnMissingParameters = FALSE,
