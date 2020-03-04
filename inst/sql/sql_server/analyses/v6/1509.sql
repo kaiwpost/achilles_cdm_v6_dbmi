@@ -1,6 +1,7 @@
 -- Distribution of ingredient cost, by drug_concept_id
 {DEFAULT @analysisId = 1509}
 {DEFAULT @costConceptId = 32005}
+{DEFAULT @costEventFieldConceptId = 1147707}
 
 -- raw data
 
@@ -10,10 +11,12 @@ select
   co.cost as count_value
 INTO #rawData_@analysisId
 from @cdmDatabaseSchema.cost co
-join @cdmDatabaseSchema.drug_exposure de on co.cost_event_id = de.drug_exposure_id
+join @cdmDatabaseSchema.drug_exposure de 
+  on co.cost_event_id = de.drug_exposure_id
 where co.cost is not null
   and co.cost_concept_id = @costConceptId
   and de.drug_concept_id <> 0
+  and co.cost_event_field_concept_id = @costEventFieldConceptId
 ;
 
 -- overallStats

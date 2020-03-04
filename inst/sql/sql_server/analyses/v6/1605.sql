@@ -1,6 +1,7 @@
 -- Distribution of paid by payer, by procedure_concept_id
 {DEFAULT @analysisId = 1605}
 {DEFAULT @costTypeConceptId = 31969}
+{DEFAULT @costEventFieldConceptId = 1147810}
 
 -- raw data
 
@@ -10,10 +11,12 @@ select
   co.cost as count_value
 INTO #rawData_@analysisId
 from @cdmDatabaseSchema.cost co
-join @cdmDatabaseSchema.procedure_occurrence po on co.cost_event_id = po.procedure_occurrence_id
+join @cdmDatabaseSchema.procedure_occurrence po 
+  on co.cost_event_id = po.procedure_occurrence_id
 where co.cost is not null
   and co.cost_type_concept_id = @costTypeConceptId
   and po.procedure_concept_id <> 0
+  and co.cost_event_field_concept_id = @costEventFieldConceptId
 ;
 
 -- overallStats

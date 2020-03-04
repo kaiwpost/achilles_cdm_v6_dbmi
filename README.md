@@ -4,7 +4,7 @@ Achilles
 [![Build Status](https://travis-ci.org/OHDSI/Achilles.svg?branch=master)](https://travis-ci.org/OHDSI/Achilles)
 [![codecov.io](https://codecov.io/github/OHDSI/Achilles/coverage.svg?branch=master)](https://codecov.io/github/OHDSI/Achilles?branch=master)
  
-**A**utomated **C**haracterization of **H**ealth **I**nformation at **L**arge-scale **L**ongitudinal **E**vidence **S**ystems (ACHILLES)---descriptive statistics and data quality checks on an OMOP CDM v5 databases
+**A**utomated **C**haracterization of **H**ealth **I**nformation at **L**arge-scale **L**ongitudinal **E**vidence **S**ystems (ACHILLES)---descriptive statistics and data quality checks on an OMOP CDM v5.x and v6.x databases
 
 * Vignette: [Running Achilles on Your CDM](https://github.com/OHDSI/Achilles/raw/master/vignettes/RunningAchilles.pdf)
 
@@ -18,13 +18,13 @@ Achilles consists of several parts:
 
 1. Index generation for better performance with Atlas Data Sources
 
-Achilles is actively being developed for CDM v5.x only.
+Achilles is actively being developed for CDM v5.x and v6.x only.
 
 ## Getting Started
 
 (Please review the [Achilles Wiki](https://github.com/OHDSI/Achilles/wiki/Additional-instructions-for-Linux) for specific details for Linux)
 
-1. Make sure you have your data in the OMOP CDM v5.x format
+1. Make sure you have your data in the OMOP CDM v5.x or v6.x format
     (https://github.com/OHDSI/CommonDataModel).
 
 1. This package makes use of rJava. Make sure that you have Java installed. If you don't have Java already installed on your computer (on most computers it already is installed), go to [java.com](https://java.com) to get the latest version. If you are having trouble with rJava, [this Stack Overflow post](https://stackoverflow.com/questions/7019912/using-the-rjava-package-on-win7-64-bit-with-r) may assist you when you begin troubleshooting.

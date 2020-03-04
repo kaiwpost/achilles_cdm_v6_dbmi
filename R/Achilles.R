@@ -473,7 +473,7 @@ achilles <- function(connectionDetails,
   # Generate Main Analyses ----------------------------------------------------------------------------------------------------------------
   
   mainAnalysisIds <- analysisDetails$ANALYSIS_ID
-  if (runCostAnalysis & compareVersion(as.character(cdmVersion), "6" < 0)) {
+  if (runCostAnalysis & compareVersion(as.character(cdmVersion), "6") < 0) {
     # for V5.x, remove distributed cost analysis ids, since that's been executed already
     mainAnalysisIds <- dplyr::anti_join(x = analysisDetails, y = distCostAnalysisDetails, by = "ANALYSIS_ID")$ANALYSIS_ID
   }
