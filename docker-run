@@ -28,6 +28,10 @@ dir.create(output_path, showWarnings=FALSE, recursive=TRUE, mode="0755")
 # Parse DB URI into pieces.
 db_conf <- parse_url(env_vars$ACHILLES_DB_URI)
 
+if(db_conf$scheme == "sqlserver") {
+    db_conf$scheme = "sql server"
+}
+
 # Some connection packages need the database on the server argument.
 server <- paste(db_conf$hostname, db_conf$path, sep="/")
 
