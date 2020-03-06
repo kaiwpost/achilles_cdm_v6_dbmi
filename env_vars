@@ -1,0 +1,7 @@
+ACHILLES_SOURCE=DEFAULT
+ACHILLES_DB_URI=sqlserver://achilles:Tobert00@shs-dev-oklahoma.cxwmqrujadvd.us-east-1.rds.amazonaws.com;user=achilles;password=Tobert00:1433
+ACHILLES_CDM_SCHEMA=shs_oklahoma.shs_oklahoma
+ACHILLES_VOCAB_SCHEMA=shs_oklahoma.shs_oklahoma
+ACHILLES_RES_SCHEMA=shs_oklahoma.shs_oklahoma_achilles
+ACHILLES_CDM_VERSION=6
+ACHILLES_OUTPUT_BASE=OUTPUT
