@@ -1,0 +1,6 @@
+achilles:
+    build: .
+    env_file:
+        - env_vars
+    volumes:
+        - C:\Users\k1post\Achilles:/opt/app/output:rw
