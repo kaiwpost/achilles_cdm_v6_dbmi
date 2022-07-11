@@ -42,13 +42,17 @@ RUN R -e "install.packages( \
  repos='http://cran.rstudio.com/', \
 ) "
 
+# The following two where swiped from below to install specific versions 07/11/2022:
+# /usr/share/doc/littler/examples/install.r openxlsx && \
+# /usr/share/doc/littler/examples/install.r rjson && \
+RUN R CMD INSTALL openxls_4.1.0
+RUN R CMD INSTALL rjson_0.2.20
+
 # Install Achilles requirements that need to be installed from source
 RUN echo 'options(repos=structure(c(CRAN="http://cloud.r-project.org/")))' > /root/.Rprofile && \
     /usr/share/doc/littler/examples/install.r remotes && \
     /usr/share/doc/littler/examples/install.r docopt && \
-    /usr/share/doc/littler/examples/install.r openxlsx && \
     /usr/share/doc/littler/examples/install.r httr && \
-    /usr/share/doc/littler/examples/install.r rjson && \
     /usr/share/doc/littler/examples/install.r R.oo && \
     /usr/share/doc/littler/examples/install.r formatR && \
     /usr/share/doc/littler/examples/install.r R.utils && \
