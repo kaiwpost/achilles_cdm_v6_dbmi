@@ -47,6 +47,7 @@ RUN R -e "install.packages( \
 # /usr/share/doc/littler/examples/install.r rjson && \
 RUN R CMD INSTALL openxls_4.1.0
 RUN R CMD INSTALL rjson_0.2.20
+RUN R CMD INSTALL ParalellLogger_1.0.1
 
 # Install Achilles requirements that need to be installed from source
 RUN echo 'options(repos=structure(c(CRAN="http://cloud.r-project.org/")))' > /root/.Rprofile && \
