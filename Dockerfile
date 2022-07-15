@@ -3,6 +3,10 @@ FROM ubuntu:trusty
 
 MAINTAINER Aaron Browne <brownea@email.chop.edu>
 
+COPY libs/openxlsx_4.1.0.tar.gz /tmp/downloaded_packages/
+COPY libs/rjson_0.2.20.tar.gz /tmp/downloaded_packages/
+COPY libs/ParallelLogger_1.0.1.tar.gz /tmp/downloaded_packages/
+
 # Install java, R and required packages and clean up.
 RUN echo deb http://ppa.launchpad.net/marutter/rrutter/ubuntu trusty main >> /etc/apt/sources.list && \
     echo deb http://ppa.launchpad.net/marutter/c2d4u/ubuntu trusty main >> /etc/apt/sources.list && \
@@ -10,6 +14,7 @@ RUN echo deb http://ppa.launchpad.net/marutter/rrutter/ubuntu trusty main >> /et
     sed 's#http://.*archive\.ubuntu\.com/ubuntu/#mirror://mirrors.ubuntu.com/mirrors.txt#g' -i /etc/apt/sources.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
+      zip \
       r-base \
       r-cran-devtools \
       r-cran-httr \
@@ -34,20 +39,21 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 # Install OHDSI/ParallelLogger 
-RUN R -e "install.packages( \
- c( \
-  'XML', \
-  'RJSONIO' \
- ), \ 
- repos='http://cran.rstudio.com/', \
-) "
+#RUN R -e "install.packages( \
+# c( \
+#  'XML', \
+#  'RJSONIO' \
+# ), \ 
+# repos='http://cran.rstudio.com/', \
+#) "
 
 # The following two where swiped from below to install specific versions 07/11/2022:
 # /usr/share/doc/littler/examples/install.r openxlsx && \
 # /usr/share/doc/littler/examples/install.r rjson && \
-RUN R CMD INSTALL openxls_4.1.0
-RUN R CMD INSTALL rjson_0.2.20
-RUN R CMD INSTALL ParalellLogger_1.0.1
+# The following three were downloaded to the git project:
+RUN R CMD INSTALL /tmp/downloaded_packages/openxlsx_4.1.0.tar.gz
+RUN R CMD INSTALL /tmp/downloaded_packages/rjson_0.2.20.tar.gz
+RUN R CMD INSTALL /tmp/downloaded_packages/ParalellLogger_1.0.1.tar.gz
 
 # Install Achilles requirements that need to be installed from source
 RUN echo 'options(repos=structure(c(CRAN="http://cloud.r-project.org/")))' > /root/.Rprofile && \
