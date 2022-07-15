@@ -2,6 +2,6 @@ achilles:
     build: .
     env_file:
         - env_vars
-    volumes:
-        - /Users/k1post/achilles:/opt/app/output:rw
+    #volumes:
+        #- /Users/k1post/achilles:/opt/app/output:rw
         #- C:\Users\k1post\Achilles:/opt/app/output:rw

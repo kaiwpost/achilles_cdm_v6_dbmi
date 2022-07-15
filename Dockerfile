@@ -3,10 +3,6 @@ FROM ubuntu:trusty
 
 MAINTAINER Aaron Browne <brownea@email.chop.edu>
 
-COPY libs/openxlsx_4.1.0.tar.gz /tmp/downloaded_packages/
-COPY libs/rjson_0.2.20.tar.gz /tmp/downloaded_packages/
-COPY libs/ParallelLogger_1.0.1.tar.gz /tmp/downloaded_packages/
-
 # Install java, R and required packages and clean up.
 RUN echo deb http://ppa.launchpad.net/marutter/rrutter/ubuntu trusty main >> /etc/apt/sources.list && \
     echo deb http://ppa.launchpad.net/marutter/c2d4u/ubuntu trusty main >> /etc/apt/sources.list && \
@@ -14,7 +10,6 @@ RUN echo deb http://ppa.launchpad.net/marutter/rrutter/ubuntu trusty main >> /et
     sed 's#http://.*archive\.ubuntu\.com/ubuntu/#mirror://mirrors.ubuntu.com/mirrors.txt#g' -i /etc/apt/sources.list && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
-      zip \
       r-base \
       r-cran-devtools \
       r-cran-httr \
@@ -39,21 +34,20 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 # Install OHDSI/ParallelLogger 
-#RUN R -e "install.packages( \
-# c( \
-#  'XML', \
-#  'RJSONIO' \
-# ), \ 
-# repos='http://cran.rstudio.com/', \
-#) "
+RUN R -e "install.packages( \
+ c( \
+  'XML', \
+  'RJSONIO' \
+ ), \ 
+ repos='http://cran.rstudio.com/', \
+) "
 
 # The following two where swiped from below to install specific versions 07/11/2022:
 # /usr/share/doc/littler/examples/install.r openxlsx && \
 # /usr/share/doc/littler/examples/install.r rjson && \
-# The following three were downloaded to the git project:
-RUN R CMD INSTALL /tmp/downloaded_packages/openxlsx_4.1.0.tar.gz
-RUN R CMD INSTALL /tmp/downloaded_packages/rjson_0.2.20.tar.gz
-RUN R CMD INSTALL /tmp/downloaded_packages/ParalellLogger_1.0.1.tar.gz
+RUN R -e 'install.packages("https://cloud.r-project.org/src/contrib/Archive/openxlsx/openxlsx_4.1.2.tar.gz", repos=NULL)'
+RUN R -e 'install.packages("https://cloud.r-project.org/src/contrib/Archive/rjson/rjson_0.2.20.tar.gz", repos=NULL)'
+
 
 # Install Achilles requirements that need to be installed from source
 RUN echo 'options(repos=structure(c(CRAN="http://cloud.r-project.org/")))' > /root/.Rprofile && \
@@ -70,8 +64,9 @@ RUN echo 'options(repos=structure(c(CRAN="http://cloud.r-project.org/")))' > /ro
       OHDSI/SqlRender \
       OHDSI/DatabaseConnectorJars \
       OHDSI/DatabaseConnector \
-      OHDSI/ParallelLogger \
+      #OHDSI/ParallelLogger \ This one is not compatible!
     && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
+RUN R -e 'install.packages("https://cloud.r-project.org/src/contrib/Archive/ParallelLogger/ParallelLogger_1.0.1.tar.gz", repos=NULL)'
 
 # Configure workspace
 WORKDIR /opt/app
@@ -81,10 +76,13 @@ VOLUME /opt/app/output
 # Add project files to container
 COPY . /opt/app/
 
+
 # Install Achilles from source
 RUN R CMD INSTALL /opt/app \
-    && rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
+    #&& rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
     && find /opt/app -mindepth 1 -not \( -wholename /opt/app/docker-run -or -wholename /opt/app/output \) -delete
+
+COPY ./lib /opt/app/lib
 
 # Define run script as default command
 CMD ["docker-run"]
